@@ -9,6 +9,10 @@ desktop.ini
 *.swp
 *.swo
 
+# Dependencies
+node_modules/
+package-lock.json
+
 # Logs and scratch
 *.log
 scratch/
