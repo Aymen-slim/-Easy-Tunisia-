@@ -81,8 +81,6 @@ function initLanguage() {
   
   const searchInput = document.getElementById('doc-search-input');
   if (searchInput) searchInput.placeholder = t('docSearchPlaceholder');
-
-  updateThemeIcon();
 }
 
 // Navigation & Screen Controller
