@@ -17,7 +17,6 @@
   - High-precision GPS triangulation with reverse-geocoding.
   - Interactive map pinpoint picker (click or drag pin anywhere in Tunisia).
   - Live city & delegation search autocomplete across all 24 Tunisian governorates.
-  - 1-tap quick pills for major Tunisian cities.
 - 🗺️ **Interactive Leaflet Map & GPS Navigation**:
   - Live map highlighting nearest Police / National Guard stations, Municipalities, Tax Offices (Recette des Finances), and certified photo studios.
   - One-click Google Maps turn-by-turn routing directly from the user's doorstep.
