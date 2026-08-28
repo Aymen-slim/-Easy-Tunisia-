@@ -44,20 +44,6 @@
   --glass-blur: blur(14px);
 }
 
-[data-theme="dark"] {
-  --bg-main: #0b0f19;
-  --bg-card: rgba(18, 24, 38, 0.92);
-  --bg-card-elevated: #161e2e;
-  --bg-subtle: #1e293b;
-  --border-color: rgba(51, 65, 85, 0.65);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-light: #64748b;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 22px 50px rgba(0, 0, 0, 0.6);
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -209,23 +195,6 @@ button {
   box-shadow: var(--shadow-sm);
 }
 
-.theme-toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  font-size: 0.85rem;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
-.theme-toggle-btn:active {
-  transform: scale(0.96);
-}
-
 /* Scrollable / Marquee Disclaimer Banner */
 .disclaimer-marquee-bar {
   background: linear-gradient(90deg, #fef3c7, #fffbeb, #fef3c7);
@@ -239,12 +208,6 @@ button {
   font-weight: 700;
   position: relative;
   user-select: none;
-}
-
-[data-theme="dark"] .disclaimer-marquee-bar {
-  background: linear-gradient(90deg, #231809, #1a1205, #231809);
-  border-color: rgba(245, 158, 11, 0.25);
-  color: #fde68a;
 }
 
 .marquee-track {
@@ -2138,11 +2101,6 @@ button {
   .lang-btn {
     padding: 4px 8px;
     font-size: 0.72rem;
-  }
-
-  .theme-toggle-btn {
-    width: 32px;
-    height: 32px;
   }
 
   .header-reset-btn {

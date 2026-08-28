@@ -1,6 +1,6 @@
 const TRANSLATIONS = {
   ar: {
-    appTitle: "Easy Tunisia • إيزي تونس",
+    appTitle: "Easy Tunisia",
     appSubtitle: "دليل المواطن الذكي والمبسط لاستخراج وتجديد بطاقة التعريف الوطنية وجواز السفر وتحديد المقرات الإدارية",
     badgeOfficial: "دليل مستقل مبسط • يعتمد بيانات سيكاد (SICAD)",
     

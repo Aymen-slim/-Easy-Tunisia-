@@ -5,7 +5,6 @@
 
 const AppState = {
   lang: localStorage.getItem('tun_id_lang') || 'ar',
-  theme: localStorage.getItem('tun_id_theme') || 'light',
   currentScreen: 'screen-choice',
   selectedDoc: 'passport', // 'passport' | 'cin'
   ageCategory: '18plus', // 'under7' | '7to17' | '18plus'
@@ -19,6 +18,9 @@ const AppState = {
   checkedDocs: new Set(JSON.parse(localStorage.getItem('tun_id_checked_docs') || '[]'))
 };
 
+// Clean up any legacy dark theme preference
+localStorage.removeItem('tun_id_theme');
+
 let mapInstance = null;
 let mapMarkersGroup = null;
 let stepPickerMapInstance = null;
@@ -26,7 +28,6 @@ let stepPickerMarker = null;
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
   initLanguage();
   populateGovernorates();
   setupEventListeners();
@@ -51,27 +52,6 @@ function t(key, replacements = {}) {
     text = text.replace(new RegExp(`\\{${placeholder}\\}`, 'g'), val);
   }
   return text;
-}
-
-function initTheme() {
-  document.documentElement.setAttribute('data-theme', AppState.theme);
-  updateThemeIcon();
-}
-
-function toggleTheme() {
-  AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
-  localStorage.setItem('tun_id_theme', AppState.theme);
-  document.documentElement.setAttribute('data-theme', AppState.theme);
-  updateThemeIcon();
-}
-
-function updateThemeIcon() {
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) {
-    btn.innerHTML = AppState.theme === 'dark' 
-      ? '<span class="theme-icon">☀️</span> <span class="theme-text">' + t('themeToggleLight') + '</span>'
-      : '<span class="theme-icon">🌙</span> <span class="theme-text">' + t('themeToggleDark') + '</span>';
-  }
 }
 
 function setLanguage(lang) {
@@ -588,9 +568,6 @@ function selectCityQuick(govId, delegation) {
 }
 
 function setupEventListeners() {
-  const themeBtn = document.getElementById('theme-toggle-btn');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
-
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });

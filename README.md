@@ -24,7 +24,6 @@
 - 💰 **Dynamic Budget & Cost Simulator**: Real-time breakdown of fiscal stamp fees (25 DT / 80 DT / 3 DT), photos, birth certificates, and total estimated budget.
 - 📸 **Photo Compliance Guidelines**: Visual specifications for official document photo dimensions (3.5x4.5cm vs 3x4cm).
 - 🌐 **Trilingual (ar, fr, en)**: Seamless switching between Arabic (RTL), French, and English.
-- 🌓 **Theme Switcher**: Dark Mode and Light Mode with ambient glassmorphism aesthetics.
 - 📲 **Export & Sharing**: One-click checklist sharing via WhatsApp, clipboard copy, and printable PDF view.
 - ❓ **Interactive FAQ**: Answers for common citizen inquiries (parental authorization, loss/theft, early renewal, online birth certificates via `e-houwiya`).
 
