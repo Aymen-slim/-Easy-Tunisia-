@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Easy Tunisia | دليل بطاقة التعريف الوطنية وجواز السفر التونسي</title>
+  <meta name="description" content="Easy Tunisia - دليل إرشادي تفاعلي ذكي ومستقل للمواطن التونسي لاستخراج وتجديد بطاقة التعريف الوطنية وجواز السفر وفق بيانات سيكاد الرسمية.">
+  <meta name="theme-color" content="#E70013">
+
+  <!-- Favicon Emblem -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23E70013%22/><circle cx=%2250%22 cy=%2250%22 r=%2226%22 fill=%22white%22/><circle cx=%2254%22 cy=%2250%22 r=%2220%22 fill=%22%23E70013%22/><polygon points=%2244,40 47,48 55,48 49,53 51,61 44,56 37,61 39,53 33,48 41,48%22 fill=%22%23E70013%22/></svg>">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-brand" onclick="goToScreen('screen-choice')" style="cursor: pointer;">
+        <div class="flag-emblem" aria-label="علم تونس">
+          <span class="flag-symbol">🇹🇳</span>
+        </div>
+        <div class="brand-text">
+          <h1 data-i18n="appTitle">Easy Tunisia • إيزي تونس</h1>
+          <span class="brand-badge" data-i18n="badgeOfficial">دليل مستقل مبسط • يعتمد بيانات سيكاد (SICAD)</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Change Document / Reset Button (Shown only in wizard & results) -->
+        <button type="button" id="header-reset-btn" class="header-reset-btn" style="display: none;">
+          <span data-i18n="changeDocBtn">🔄 تغيير الوثيقة</span>
+        </button>
+
+        <!-- Language Switcher -->
+        <div class="lang-selector" role="group" aria-label="Language selection">
+          <button type="button" class="lang-btn active" data-lang="ar">عربي</button>
+          <button type="button" class="lang-btn" data-lang="fr">FR</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <!-- Dark/Light Mode Switcher -->
+        <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" aria-label="تبديل المظهر">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Continuous Disclaimer Marquee Banner -->
+    <div class="disclaimer-marquee-bar" role="alert" aria-label="تنبيه الموقع">
+      <div class="marquee-track">
+        <span class="marquee-item" data-i18n="disclaimerText">
+          ⚠️ تنبيه هام: موقع Easy Tunisia هو مبادرة رقمية مستقلة وغير رسمية، تهدف إلى تبسيط الإجراءات الإدارية وتسهيل التوجيه للمواطن التونسي وفقاً للبيانات المنشورة ببوابة سيكاد الرسمية.
+        </span>
+        <span class="marquee-item" data-i18n="disclaimerText" aria-hidden="true">
+          ⚠️ تنبيه هام: موقع Easy Tunisia هو مبادرة رقمية مستقلة وغير رسمية، تهدف إلى تبسيط الإجراءات الإدارية وتسهيل التوجيه للمواطن التونسي وفقاً للبيانات المنشورة ببوابة سيكاد الرسمية.
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- ========================================================================= -->
+    <!-- SCREEN 1: LANDING SCREEN - 2 BIG CHOICES (PASSPORT vs ID CARD)            -->
+    <!-- ========================================================================= -->
+    <section id="screen-choice" class="flow-screen active-screen">
+      <div class="hero-choice-header">
+        <div class="hero-badge">🇹🇳 الإرشاد الإداري الذكي للمواطن التونسي</div>
+        <h2 class="hero-choice-title" data-i18n="heroChoiceTitle">
+          ما هي الوثيقة التي ترغب في استخراجها أو تجديدها؟
+        </h2>
+        <p class="hero-choice-sub" data-i18n="heroChoiceSubtitle">
+          اختر نوع الوثيقة لنرشدك خطوة بخطوة حسب عمرك وموقعك الجغرافي بدقة
+        </p>
+      </div>
+
+      <div class="dual-choice-grid">
+        
+        <!-- CHOICE CARD 1: PASSPORT -->
+        <div class="choice-card passport-choice-card" onclick="selectDocument('passport')">
+          <div class="choice-card-badge">SICAD D1618</div>
+          <div class="choice-icon-large">📕</div>
+          <h3 class="choice-card-title">جواز السفر العادي</h3>
+          <p class="choice-card-sub">Passeport Ordinaire Tunisien</p>
+          
+          <ul class="choice-feature-list">
+            <li><span>✓</span> مدة الصلوحية: <strong>5 سنوات</strong></li>
+            <li><span>✓</span> معلوم الطابع الجبائي: <strong>25 د.ت أو 80 د.ت</strong></li>
+            <li><span>✓</span> أجل الإنجاز: <strong>15 يوماً</strong> من تاريخ الإيداع</li>
+            <li><span>✓</span> مرجع تشريعي: القانون عدد 40 لسنة 1975</li>
+          </ul>
+
+          <button type="button" class="choice-cta-btn passport-btn">
+            <span data-i18n="choosePassportBtn">اختيار جواز السفر 📕</span>
+            <span class="btn-arrow">←</span>
+          </button>
+        </div>
+
+        <!-- CHOICE CARD 2: CIN (NATIONAL ID) -->
+        <div class="choice-card cin-choice-card" onclick="selectDocument('cin')">
+          <div class="choice-card-badge">SICAD D1309</div>
+          <div class="choice-icon-large">🪪</div>
+          <h3 class="choice-card-title">بطاقة التعريف الوطنية</h3>
+          <p class="choice-card-sub">Carte d'Identité Nationale (CIN)</p>
+          
+          <ul class="choice-feature-list">
+            <li><span>✓</span> مدة الصلوحية: <strong>دائمة وغير محددة زمنياً</strong></li>
+            <li><span>✓</span> معلوم قار: <strong>3 دنانير</strong> (وصل خلاص من القباضة)</li>
+            <li><span>✓</span> السن القانوني: <strong>18 سنة</strong> (وترخيص للقصر)</li>
+            <li><span>✓</span> مرجع تشريعي: القانون عدد 27 لسنة 1993</li>
+          </ul>
+
+          <button type="button" class="choice-cta-btn cin-btn">
+            <span data-i18n="chooseCinBtn">اختيار بطاقة التعريف 🪪</span>
+            <span class="btn-arrow">←</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Quick FAQs on Home Screen -->
+      <section class="home-faq-preview">
+        <h3 class="faq-section-title">
+          <span>💡</span> <span data-i18n="faqTitle">الأسئلة الشائعة والإجابات الرسمية (FAQ)</span>
+        </h3>
+        <div id="faq-accordion-container" class="faq-accordion-box"></div>
+      </section>
+
+    </section>
+
+
+    <!-- ========================================================================= -->
+    <!-- SCREEN 2: STEP 1 - AGE & STATUS QUESTIONNAIRE                             -->
+    <!-- ========================================================================= -->
+    <section id="screen-step-age" class="flow-screen">
+      <div class="wizard-container">
+        
+        <!-- Step Progress Bar -->
+        <div class="wizard-stepper">
+          <div class="step-indicator active">
+            <span class="step-num">1</span>
+            <span class="step-text" data-i18n="stepAgeTitle">1. العمر والصفة</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="step-indicator">
+            <span class="step-num">2</span>
+            <span class="step-text" data-i18n="stepLocationTitle">2. الموقع والإقامة</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="step-indicator">
+            <span class="step-num">3</span>
+            <span class="step-text" data-i18n="stepResultsTitle">3. الوثائق والخريطة</span>
+          </div>
+        </div>
+
+        <div class="wizard-card">
+          <div class="wizard-card-header">
+            <div class="selected-doc-pill" id="selected-doc-pill">جواز السفر 📕</div>
+            <h3 data-i18n="stepAgeTitle">1. العمر والصفة والوضعية</h3>
+          </div>
+
+          <div class="wizard-form-body">
+            
+            <!-- Age Selection -->
+            <div class="form-group-block">
+              <label class="form-group-label">
+                <span>🎂</span> <span data-i18n="ageLabel">العمر / السن:</span>
+              </label>
+              <div class="chip-options-large">
+                <input type="radio" name="wiz-age" id="wiz-age-under7" value="under7" class="chip-radio">
+                <label for="wiz-age-under7" class="chip-label-large">
+                  <span class="chip-emoji">👶</span>
+                  <div>
+                    <strong data-i18n="ageUnder7">أقل من 7 سنوات</strong>
+                    <small>تعريفة مخفضة لجواز السفر (25 د.ت)</small>
+                  </div>
+                </label>
+
+                <input type="radio" name="wiz-age" id="wiz-age-7to17" value="7to17" class="chip-radio">
+                <label for="wiz-age-7to17" class="chip-label-large">
+                  <span class="chip-emoji">🧑</span>
+                  <div>
+                    <strong data-i18n="ageBetween7and17">من 7 إلى 17 سنة (قاصر)</strong>
+                    <small>يتطلب ترخيص الولي الشرعي</small>
+                  </div>
+                </label>
+
+                <input type="radio" name="wiz-age" id="wiz-age-18plus" value="18plus" class="chip-radio" checked>
+                <label for="wiz-age-18plus" class="chip-label-large">
+                  <span class="chip-emoji">👨‍💼</span>
+                  <div>
+                    <strong data-i18n="age18Plus">18 سنة فما فوق (راشد)</strong>
+                    <small>السن القانوني الإجباري</small>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Status / Profession -->
+            <div class="form-group-block">
+              <label class="form-group-label">
+                <span>💼</span> <span data-i18n="statusLabel">الصفة / المهنة:</span>
+              </label>
+              <div class="chip-options">
+                <input type="radio" name="wiz-status" id="wiz-stat-student" value="student" class="chip-radio" checked>
+                <label for="wiz-stat-student" class="chip-label" data-i18n="statusStudent">تلميذ أو طالب</label>
+
+                <input type="radio" name="wiz-status" id="wiz-stat-employed" value="employed" class="chip-radio">
+                <label for="wiz-stat-employed" class="chip-label" data-i18n="statusEmployed">موظف / صاحب مهنة / عامل</label>
+
+                <input type="radio" name="wiz-status" id="wiz-stat-other" value="other" class="chip-radio">
+                <label for="wiz-stat-other" class="chip-label" data-i18n="statusOther">بدون عمل / أخرى</label>
+              </div>
+            </div>
+
+            <!-- Procedure Type -->
+            <div class="form-group-block">
+              <label class="form-group-label">
+                <span>📋</span> <span data-i18n="procedureLabel">نوع الإجراء:</span>
+              </label>
+              <div class="chip-options">
+                <input type="radio" name="wiz-procedure" id="wiz-proc-first" value="first_time" class="chip-radio" checked>
+                <label for="wiz-proc-first" class="chip-label" data-i18n="procFirstTime">استخراج لأول مرة</label>
+
+                <input type="radio" name="wiz-procedure" id="wiz-proc-renew" value="renewal" class="chip-radio">
+                <label for="wiz-proc-renew" class="chip-label" data-i18n="procRenewal">تجديد عادي</label>
+
+                <input type="radio" name="wiz-procedure" id="wiz-proc-lost" value="lost" class="chip-radio">
+                <label for="wiz-proc-lost" class="chip-label" data-i18n="procLost">ضياع أو تلف</label>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="wizard-nav-footer">
+            <button type="button" class="btn-secondary" onclick="goToScreen('screen-choice')">
+              <span data-i18n="backBtn">رجوع</span>
+            </button>
+            <button type="button" class="btn-primary" onclick="proceedToLocationStep()">
+              <span data-i18n="nextBtn">متابعة إلى تحديد الموقع 📍</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ========================================================================= -->
+    <!-- SCREEN 3: STEP 2 - LOCATION & GPS PERMISSION                              -->
+    <!-- ========================================================================= -->
+    <section id="screen-step-location" class="flow-screen">
+      <div class="wizard-container">
+        
+        <!-- Step Progress Bar -->
+        <div class="wizard-stepper">
+          <div class="step-indicator completed">
+            <span class="step-num">✓</span>
+            <span class="step-text" data-i18n="stepAgeTitle">1. العمر والصفة</span>
+          </div>
+          <div class="stepper-line active"></div>
+          <div class="step-indicator active">
+            <span class="step-num">2</span>
+            <span class="step-text" data-i18n="stepLocationTitle">2. الموقع والإقامة</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="step-indicator">
+            <span class="step-num">3</span>
+            <span class="step-text" data-i18n="stepResultsTitle">3. الوثائق والخريطة</span>
+          </div>
+        </div>
+
+        <div class="wizard-card">
+          <div class="wizard-card-header">
+            <h3 data-i18n="locationPromptTitle">أين تقيم حالياً؟</h3>
+            <p class="wizard-header-sub" data-i18n="locationPromptDesc">
+              نحتاج لمعرفة موقعك أو مدينتك لنرشدك بدقة إلى أقرب مركز شرطة، بلدية، وقباضة مالية تابعة لك
+            </p>
+          </div>
+
+          <div class="wizard-form-body">
+            
+            <!-- GPS Geolocation Prompt Banner -->
+            <div class="gps-permission-box">
+              <div class="gps-box-icon">📍</div>
+              <div class="gps-box-content">
+                <h4>تحديد الموقع الجغرافي التلقائي (GPS)</h4>
+                <p>اضغط على الزر ليتم التعرف على موقعك الفعلي وإظهار المراكز الإدارية الأقرب إليك على الخريطة فوراً.</p>
+                
+                <button type="button" id="request-gps-btn" class="gps-cta-button" onclick="requestUserLocation()">
+                  <span class="gps-icon">🛰️</span>
+                  <span id="gps-btn-text" data-i18n="gpsBtn">📍 استخدام موقعي الحالي بدقة (GPS)</span>
+                </button>
+                
+                <div id="gps-status-badge" class="gps-status-badge" style="display: none;"></div>
+                
+                <p class="gps-desktop-note" data-i18n="gpsDesktopWarning" style="margin-top: 8px; font-size: 0.76rem; opacity: 0.85;">
+                  💡 إذا لم يتطابق الموقع المقترح تلقائياً مع مدينتك الحقيقية (بسبب مزود الإنترنت)، يمكنك البحث عن مدينتك أو النقر على الخريطة فوراً أدناه لتصحيحه.
+                </p>
+              </div>
+            </div>
+
+            <!-- Instant City & Delegation Live Search -->
+            <div class="city-search-box">
+              <label class="form-group-label">
+                <span>🔍</span> <span data-i18n="citySearchPlaceholder">ابحث مباشرة عن مدينتك أو معتمديتك:</span>
+              </label>
+              <div class="search-input-wrapper">
+                <input type="text" id="city-search-input" class="city-search-input" placeholder="🔍 اكتب اسم المدينة (مثال: المرسى، سوسة، نابل، صفاقس، بنزرت، جرجيس...)">
+                <div id="city-search-dropdown" class="city-search-dropdown" style="display: none;"></div>
+              </div>
+            </div>
+
+            <!-- Quick City Pills for 1-Tap Selection -->
+            <div class="quick-cities-block">
+              <span class="quick-cities-label" data-i18n="quickCitiesTitle">اختيار سريع للمدن الرئيسية:</span>
+              <div class="quick-city-pills" id="quick-city-pills">
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('tunis', 'تونس المدينة')">🇹🇳 تونس المدينة</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('tunis', 'المرسى')">🌊 المرسى</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('ariana', 'أريانة المدينة')">🌸 أريانة</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('ben_arous', 'بن عروس')">🏭 بن عروس</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('sousse', 'سوسة المدينة')">🏖️ سوسة</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('sfax', 'صفاقس المدينة')">⚓ صفاقس</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('nabeul', 'نابل')">🏺 نابل</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('bizerte', 'بنزرت الشمالية')">🚢 بنزرت</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('monastir', 'المنستير')">🏛️ المنستير</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('medenine', 'حومة السوق (جربة)')">🏝️ جربة</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('kairouan', 'القيروان الشمالية')">🕌 القيروان</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('gabes', 'قابس المدينة')">🌴 قابس</button>
+                <button type="button" class="city-pill-btn" onclick="selectCityQuick('abroad', 'أوروبا (فرنسا، إيطاليا، ألمانيا...)')">✈️ مقيم بالخارج</button>
+              </div>
+            </div>
+
+            <div class="divider-text">
+              <span data-i18n="manualLocationOr">أو اختر يدوياً من قائمة الولايات والمعتمديات:</span>
+            </div>
+
+            <!-- Manual Governorate & Delegation Selection -->
+            <div class="manual-location-grid">
+              <div class="form-group-block">
+                <label class="form-group-label" data-i18n="locationLabel">الولاية:</label>
+                <select id="gov-select" class="select-control-large" onchange="onGovernorateChange()"></select>
+              </div>
+
+              <div class="form-group-block">
+                <label class="form-group-label" data-i18n="delegationLabel">المعتمدية / المنطقة:</label>
+                <select id="delegation-select" class="select-control-large" onchange="onDelegationChange()"></select>
+              </div>
+            </div>
+
+            <!-- Step 2 Interactive Pinpoint Map -->
+            <div class="step-map-picker-box">
+              <label class="form-group-label">
+                <span>🗺️</span> <span data-i18n="clickMapHint">انقر في أي مكان على الخريطة لتحديد موقعك بدقة:</span>
+              </label>
+              <div id="step-picker-map" class="step-picker-map-wrapper"></div>
+            </div>
+
+          </div>
+
+          <div class="wizard-nav-footer">
+            <button type="button" class="btn-secondary" onclick="goToScreen('screen-step-age')">
+              <span data-i18n="backBtn">رجوع</span>
+            </button>
+            <button type="button" class="btn-primary" onclick="proceedToResults()">
+              <span data-i18n="nextBtn">عرض الوثائق المطلوبة والخريطة 🚀</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ========================================================================= -->
+    <!-- SCREEN 4: RESULTS - PERSONALIZED CHECKLIST + LIVE INTERACTIVE MAP         -->
+    <!-- ========================================================================= -->
+    <section id="screen-results" class="flow-screen">
+      
+      <!-- Top Summary Pill Banner -->
+      <div class="results-top-banner">
+        <div class="results-summary-left">
+          <div class="doc-type-badge-result" id="res-doc-badge">جواز السفر 📕</div>
+          <div class="summary-chips">
+            <span class="summary-chip" id="res-age-chip">العمر: 18 سنة فما فوق</span>
+            <span class="summary-chip" id="res-status-chip">تلميذ أو طالب</span>
+            <span class="summary-chip" id="res-loc-chip">📍 تونس - تونس المدينة</span>
+          </div>
+        </div>
+        <button type="button" class="change-doc-btn" onclick="goToScreen('screen-choice')">
+          <span data-i18n="changeDocBtn">🔄 تغيير الوثيقة أو المعطيات</span>
+        </button>
+      </div>
+
+      <!-- Quick Action Share & Online Portal Bar -->
+      <div class="quick-action-strip">
+        <button type="button" class="quick-action-btn btn-whatsapp" onclick="shareOnWhatsApp()">
+          <span data-i18n="shareWhatsappBtn">مشاركة القائمة عبر واتساب 📲</span>
+        </button>
+        <button type="button" class="quick-action-btn btn-copy" onclick="copyChecklistToClipboard()">
+          <span data-i18n="copyListBtn">نسخ القائمة للحافظة 📋</span>
+        </button>
+        <a href="https://madania.gov.tn" target="_blank" rel="noopener" class="quick-action-btn btn-portal">
+          <span data-i18n="onlineBirthPortalBtn">🌐 استخراج مضمون ولادة (ء-هوية)</span>
+        </a>
+      </div>
+
+      <!-- Main Results Grid: Document Checklist + Interactive Map -->
+      <div class="results-main-layout">
+        
+        <!-- Left: Document Requirements & Checklist -->
+        <div class="results-docs-column">
+          
+          <!-- Card Header & Metadata -->
+          <div class="doc-details-card">
+            
+            <div class="doc-details-top" id="doc-card-header-bg">
+              <div class="doc-icon-badge" id="res-doc-icon">📕</div>
+              <div>
+                <h2 id="res-doc-title">جواز السفر العادي</h2>
+                <p id="res-doc-subtitle" class="card-subtext">Passeport Ordinaire Tunisien</p>
+              </div>
+            </div>
+
+            <!-- Meta Chips -->
+            <div class="card-meta-chips">
+              <div class="meta-chip">
+                <span class="meta-chip-label" data-i18n="validityLabel">مدة الصلوحية</span>
+                <span class="meta-chip-val" id="res-validity-val">5 سنوات</span>
+              </div>
+              <div class="meta-chip">
+                <span class="meta-chip-label" data-i18n="processingTimeLabel">أجل الإنجاز</span>
+                <span class="meta-chip-val" id="res-time-val">15 يوماً من الإيداع</span>
+              </div>
+              <div class="meta-chip">
+                <span class="meta-chip-label">المرجع القانوني</span>
+                <span class="meta-chip-val" id="res-legal-val">قانون عدد 40 لسنة 1975</span>
+              </div>
+            </div>
+
+            <!-- Fee Highlight Banner -->
+            <div class="fee-highlight-box">
+              <div class="fee-title">
+                <span>💰</span> <span data-i18n="feeLabel">معلوم الطابع الجبائي / وصل الخلاص:</span>
+              </div>
+              <div id="res-fee-badge" class="fee-badge-container">
+                <!-- Dynamically computed -->
+              </div>
+            </div>
+
+            <!-- Checklist Body -->
+            <div class="card-body">
+              <div class="checklist-header-row">
+                <div>
+                  <h3 class="section-subtitle">
+                    <span>📄</span> <span data-i18n="requiredDocsTitle">قائمة الوثائق المطلوبة</span>
+                  </h3>
+                  <p class="section-hint" data-i18n="docCheckHint">اضغط على الوثيقة لتأكيد تجهيزها (يتم الحفظ تلقائياً)</p>
+                </div>
+              </div>
+
+              <!-- Search Bar inside Checklist -->
+              <div class="doc-search-bar">
+                <input type="text" id="doc-search-input" class="doc-search-input" placeholder="🔍 ابحث في الوثائق...">
+              </div>
+
+              <!-- Dynamic Checklist Items -->
+              <div id="results-docs-list" class="docs-checklist"></div>
+            </div>
+
+            <!-- Progress Footer -->
+            <div class="card-progress-footer">
+              <div class="progress-header">
+                <span data-i18n="progressTitle">جاهزية الملف:</span>
+                <span id="res-progress-text">0/0</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="res-progress-bar" class="progress-bar-fill progress-passport"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Budget Simulator Card -->
+          <div id="budget-simulator-box" class="budget-simulator-card"></div>
+
+          <!-- Photo Compliance Guide -->
+          <div id="photo-guide-card" class="photo-guide-card"></div>
+
+        </div>
+
+        <!-- Right: Interactive Live Map & Direct Navigation Links -->
+        <div class="results-map-column">
+          
+          <div class="interactive-map-card">
+            
+            <div class="map-card-header">
+              <div>
+                <h3 data-i18n="mapsSectionTitle">
+                  <span>🗺️</span> الخريطة التفاعلية: أقرب المصالح الإدارية
+                </h3>
+                <p class="section-hint" data-i18n="mapsSubtitle">
+                  تحديد مباشر للمقرات الإدارية والبلديات والقباضات مع مسارات خرائط Google
+                </p>
+              </div>
+              <div id="map-locality-pill" class="locality-pill">
+                📍 تونس - تونس المدينة
+              </div>
+            </div>
+
+            <!-- Leaflet Interactive Map Container -->
+            <div id="map-container" class="leaflet-map-wrapper"></div>
+
+            <!-- Quick Places & Navigation List -->
+            <div class="admin-places-list">
+              
+              <!-- Police Station Card -->
+              <div class="admin-place-item">
+                <div class="place-item-top">
+                  <div class="place-icon-box icon-police">👮</div>
+                  <div class="place-info">
+                    <h4 data-i18n="nearestPoliceTitle">أقرب مركز شرطة / حرس وطني</h4>
+                    <p data-i18n="nearestPoliceDesc">لإيداع المطلب واستلام الوثيقة (مرجع النظر الترابي)</p>
+                  </div>
+                </div>
+                <a id="res-map-link-police" href="#" target="_blank" rel="noopener" class="place-nav-btn">
+                  <span>🗺️ مسار الطريق (Google Maps)</span>
+                </a>
+              </div>
+
+              <!-- Municipality Card -->
+              <div class="admin-place-item">
+                <div class="place-item-top">
+                  <div class="place-icon-box icon-muni">🏛️</div>
+                  <div class="place-info">
+                    <h4 data-i18n="nearestMunicipalityTitle">أقرب بلدية / دائرة بلدية</h4>
+                    <p data-i18n="nearestMunicipalityDesc">لاستخراج مضمون الولادة والتعريف بالإمضاء</p>
+                  </div>
+                </div>
+                <a id="res-map-link-municipality" href="#" target="_blank" rel="noopener" class="place-nav-btn">
+                  <span>🗺️ مسار الطريق (Google Maps)</span>
+                </a>
+              </div>
+
+              <!-- Recette des Finances Card -->
+              <div class="admin-place-item">
+                <div class="place-item-top">
+                  <div class="place-icon-box icon-recette">🏦</div>
+                  <div class="place-info">
+                    <h4 data-i18n="nearestRecetteTitle">أقرب قباضة مالية</h4>
+                    <p data-i18n="nearestRecetteDesc">لدفع رسوم الطابع الجبائي ووصل الخلاص</p>
+                  </div>
+                </div>
+                <a id="res-map-link-recette" href="#" target="_blank" rel="noopener" class="place-nav-btn">
+                  <span>🗺️ مسار الطريق (Google Maps)</span>
+                </a>
+              </div>
+
+              <!-- Certified Photo Studio -->
+              <div class="admin-place-item">
+                <div class="place-item-top">
+                  <div class="place-icon-box icon-photo">📸</div>
+                  <div class="place-info">
+                    <h4 data-i18n="nearestPhotoTitle">أقرب ستوديو تصوير فوتوغرافي</h4>
+                    <p data-i18n="nearestPhotoDesc">لأخذ الصور الشمسية المطابقة لمواصفات سيكاد</p>
+                  </div>
+                </div>
+                <a id="res-map-link-photo" href="#" target="_blank" rel="noopener" class="place-nav-btn">
+                  <span>🗺️ مسار الطريق (Google Maps)</span>
+                </a>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 4 Steps Workflow Section -->
+      <section class="steps-section">
+        <h3 class="steps-title" data-i18n="stepsTitle">المراحل الأربعة لاستكمال الملف</h3>
+        
+        <div class="timeline-grid">
+          <div class="timeline-step-card">
+            <span class="step-num-badge">1</span>
+            <h4 data-i18n="step1Title">1. جمع الوثائق</h4>
+            <p data-i18n="step1Desc">استخراج المضمون وتجهيز الصور والشهائد والمطبوعة الإدارية</p>
+          </div>
+
+          <div class="timeline-step-card">
+            <span class="step-num-badge">2</span>
+            <h4 data-i18n="step2Title">2. دفع الرسوم</h4>
+            <p data-i18n="step2Desc">اقتناء وصل الخلاص أو الطابع الجبائي من أقرب قباضة مالية</p>
+          </div>
+
+          <div class="timeline-step-card">
+            <span class="step-num-badge">3</span>
+            <h4 data-i18n="step3Title">3. إيداع الملف</h4>
+            <p data-i18n="step3Desc">التوجه لمركز الشرطة أو الحرس الوطني مرجع نظر الإقامة</p>
+          </div>
+
+          <div class="timeline-step-card">
+            <span class="step-num-badge">4</span>
+            <h4 data-i18n="step4Title">4. الاستلام</h4>
+            <p data-i18n="step4Desc">استلام الجواز أو بطاقة التعريف تامة الموجب خلال 15 يوماً</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Important Guidelines & Tips -->
+      <section class="tips-section">
+        <h3 class="tips-header">
+          <span>⚠️</span> <span data-i18n="tipsTitle">توصيات وملاحظات هامة جداً</span>
+        </h3>
+        <div class="tips-list">
+          <div class="tip-item">
+            <span class="tip-icon">📌</span>
+            <span data-i18n="tipPassport1">يحجر إلحاق أي تشطيب أو تغيير أو إضافات على الجواز إلا من طرف السلطة المختصة.</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">📌</span>
+            <span data-i18n="tipPassport2">كل ضياع لجواز السفر يوجب إعلام مركز الأمن فوراً أو أقرب قنصلية بالخارج.</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">📌</span>
+            <span data-i18n="tipPassport3">تحجر إعارة الجواز أو إرساله عبر البريد ولا يمكن حمله إلا من طرف صاحبه.</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">📌</span>
+            <span data-i18n="tipCin1">صلوحية بطاقة التعريف الوطنية غير محددة زمنياً (دائمة) ما لم تتغير المهنة أو المقر أو الحالة المدنية.</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">📌</span>
+            <span data-i18n="tipCin2">السن القانوني الإجباري لاستخراج بطاقة التعريف هو 18 سنة، ويمكن للقصر دون 18 سنة استخراجها استثنائياً بترخيص معلل من الولي.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Print Action Bar -->
+      <div class="action-bar-bottom">
+        <button type="button" id="print-checklist-btn" class="print-btn" onclick="window.print()">
+          <span>🖨️</span> <span data-i18n="printChecklistBtn">طباعة وتحميل قائمة الوثائق (PDF)</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p data-i18n="sicadSource">المصدر الرسمي: بوابة الخدمات الإدارية التونسية (سيكاد - SICAD) - وزارة الداخلية</p>
+      <div class="footer-links">
+        <a href="http://www.sicad.gov.tn/Ar/__57_3_D1309" target="_blank" rel="noopener">
+          <span>🔗</span> <span data-i18n="cinSourceLinkText">رابط بطاقة التعريف (سيكاد D1309)</span>
+        </a>
+        <span>•</span>
+        <a href="http://www.sicad.gov.tn/Ar/_57_3_D1618" target="_blank" rel="noopener">
+          <span>🔗</span> <span data-i18n="passportSourceLinkText">رابط جواز السفر (سيكاد D1618)</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
