@@ -101,17 +101,27 @@ const TRANSLATIONS = {
     sourceCourt: "محكمة الناحية أو مركز الأمن (شهادة ضياع)",
     sourceConsulate: "القنصلية أو البعثة الدبلوماسية التونسية بالخارج",
 
-    // Maps
+    // Maps & Verified Departments
     mapsSectionTitle: "الخريطة التفاعلية: أقرب المصالح الإدارية إليك",
-    mapsSubtitle: "خريطة تفاعلية ومسارات سريعة عبر خرائط Google للوصول المباشر إلى الإدارات المختصة",
+    mapsSubtitle: "تحديد دقيق للمقرات الأمنية، البلديات، والقباضات المالية مع المسارات المباشرة",
     nearestPoliceTitle: "أقرب مركز شرطة / حرس وطني",
-    nearestPoliceDesc: "لإيداع المطلب واستلام الوثيقة",
+    nearestPoliceDesc: "لإيداع المطلب واستلام الوثيقة (مرجع النظر الترابي)",
     nearestMunicipalityTitle: "أقرب بلدية / دائرة بلدية",
     nearestMunicipalityDesc: "لاستخراج مضمون الولادة والتعريف بالإمضاء",
     nearestRecetteTitle: "أقرب قباضة مالية",
     nearestRecetteDesc: "لدفع رسوم الطابع الجبائي ووصل الخلاص",
     nearestPhotoTitle: "أقرب ستوديو تصوير فوتوغرافي",
     nearestPhotoDesc: "لأخذ الصور الشمسية المطابقة للمواصفات",
+    
+    verifiedBadge: "مقر رسمي مؤكد ✓",
+    consulateBadge: "بعثة دبلوماسية وقنصلية",
+    distanceKm: "{dist} كم من موقعك",
+    distanceM: "{dist} م من موقعك",
+    callOffice: "اتصال هاتفي 📞",
+    centerOnMap: "عرض في الخريطة 📍",
+    openGoogleMapsNav: "مسار الطريق عبر الخريطة (GPS)",
+    consulateInfo: "💡 للمواطنين المقيمين بالخارج: يتم إيداع واستلام جواز السفر وبطاقة التعريف لدى القنصلية أو السفارة التونسية التابعين لها بالخارج.",
+    officialHours: "أوقات العمل:",
     
     getDirectionsBtn: "مسار الطريق عبر الخريطة (GPS Navigation)",
     openInGoogleMaps: "فتح في خرائط Google",
@@ -256,17 +266,27 @@ const TRANSLATIONS = {
     sourceCourt: "Tribunal cantonal ou poste de police (certificat de perte)",
     sourceConsulate: "Consulat ou mission diplomatique tunisienne à l'étranger",
 
-    // Maps
+    // Maps & Verified Departments
     mapsSectionTitle: "Carte Interactive : Les administrations près de chez vous",
-    mapsSubtitle: "Localisation en temps réel et itinéraires rapides vers les services compétents",
+    mapsSubtitle: "Localisation exacte et vérifiée des postes de police, mairies et recettes des finances",
     nearestPoliceTitle: "Poste de Police / Garde Nationale",
-    nearestPoliceDesc: "Pour le dépôt du dossier et le retrait du document",
+    nearestPoliceDesc: "Pour le dépôt du dossier et le retrait du document (compétence territoriale)",
     nearestMunicipalityTitle: "Municipalité / État Civil",
     nearestMunicipalityDesc: "Pour l'extrait de naissance et la légalisation de signature",
     nearestRecetteTitle: "Recette des Finances",
     nearestRecetteDesc: "Pour le paiement du timbre fiscal et de la quittance",
     nearestPhotoTitle: "Studio Photo Agréé",
     nearestPhotoDesc: "Pour les photos d'identité aux normes requises",
+    
+    verifiedBadge: "Lieu Officiel Vérifié ✓",
+    consulateBadge: "Mission Consulaire & Diplomatique",
+    distanceKm: "à {dist} km de votre position",
+    distanceM: "à {dist} m de votre position",
+    callOffice: "Appeler 📞",
+    centerOnMap: "Voir sur la carte 📍",
+    openGoogleMapsNav: "Itinéraire GPS (Google Maps)",
+    consulateInfo: "💡 Pour les citoyens résidant à l'étranger : Le dépôt et le retrait de la CIN et du passeport s'effectuent auprès de votre consulat ou ambassade de rattachement.",
+    officialHours: "Horaires d'ouverture :",
     
     getDirectionsBtn: "Itinéraire GPS Navigation",
     openInGoogleMaps: "Ouvrir dans Google Maps",
@@ -411,17 +431,27 @@ const TRANSLATIONS = {
     sourceCourt: "District Court or Police Station (Loss Certificate)",
     sourceConsulate: "Tunisian Consulate or Embassy abroad",
 
-    // Maps
+    // Maps & Verified Departments
     mapsSectionTitle: "Interactive Map: Administrative Offices Near You",
-    mapsSubtitle: "Live interactive map & quick navigation links to locate the competent offices in your region",
+    mapsSubtitle: "Verified exact locations for Police stations, Municipalities, and Tax Revenue Offices",
     nearestPoliceTitle: "Nearest Police / Guard Station",
-    nearestPoliceDesc: "For file submission and document pick-up",
+    nearestPoliceDesc: "For file submission and document pick-up (territorial jurisdiction)",
     nearestMunicipalityTitle: "Nearest Municipality (Baladiya)",
     nearestMunicipalityDesc: "For birth certificate and signature certification",
     nearestRecetteTitle: "Nearest Tax Office (Recette des Finances)",
     nearestRecetteDesc: "For fiscal stamp payment and receipt",
     nearestPhotoTitle: "Nearest Certified Photo Studio",
     nearestPhotoDesc: "For compliant ID / passport photos",
+    
+    verifiedBadge: "Verified Official Office ✓",
+    consulateBadge: "Consular & Diplomatic Mission",
+    distanceKm: "{dist} km away",
+    distanceM: "{dist} m away",
+    callOffice: "Call Office 📞",
+    centerOnMap: "View on Map 📍",
+    openGoogleMapsNav: "GPS Directions (Google Maps)",
+    consulateInfo: "💡 For citizens living abroad: Passport and ID Card applications and renewals are processed at your local Tunisian Consulate or Embassy.",
+    officialHours: "Office Hours:",
     
     getDirectionsBtn: "GPS Navigation Route",
     openInGoogleMaps: "Open in Google Maps",

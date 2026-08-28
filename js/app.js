@@ -949,7 +949,7 @@ function renderResults() {
   renderChecklistOnly();
 
   renderChecklistProgress();
-  updateMapsUrls();
+  renderAdminDepartments();
 }
 
 function renderChecklistOnly() {
@@ -1112,44 +1112,176 @@ function renderChecklistProgress() {
   if (txt) txt.textContent = t('completedDocs', { count: checked, total: docs.length }) + ` (${pct}%)`;
 }
 
-function updateMapsUrls() {
+let mapMarkerInstances = {};
+
+// Render Verified Government Administrative Departments List
+function renderAdminDepartments() {
+  const container = document.getElementById('admin-places-container');
+  if (!container) return;
+
   const gov = SICAD_DATA.governorates.find(g => g.id === AppState.governorateId) || SICAD_DATA.governorates[0];
-  const queryBase = `${AppState.delegation} ${gov.ar} تونس`;
+  const isAbroad = AppState.isAbroad || (AppState.governorateId === 'abroad');
+  const userLat = AppState.userCoords ? AppState.userCoords.lat : null;
+  const userLng = AppState.userCoords ? AppState.userCoords.lng : null;
 
-  let policeUrl, muniUrl, recetteUrl, photoUrl;
+  // Retrieve verified departments from official dataset
+  const depts = (typeof getVerifiedDepartments === 'function') 
+    ? getVerifiedDepartments(AppState.governorateId, AppState.delegation, userLat, userLng)
+    : [];
 
-  if (AppState.userCoords && AppState.userCoords.lat) {
-    const origin = `${AppState.userCoords.lat},${AppState.userCoords.lng}`;
-    policeUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${encodeURIComponent('مركز شرطة أو حرس وطني ' + queryBase)}`;
-    muniUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${encodeURIComponent('بلدية أو دائرة بلدية ' + queryBase)}`;
-    recetteUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${encodeURIComponent('قباضة مالية ' + queryBase)}`;
-    photoUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${encodeURIComponent('استوديو تصوير فوتوغرافي ' + queryBase)}`;
-  } else {
-    policeUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('مركز شرطة أو حرس وطني ' + queryBase)}`;
-    muniUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('بلدية أو دائرة بلدية ' + queryBase)}`;
-    recetteUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('قباضة مالية ' + queryBase)}`;
-    photoUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('استوديو تصوير فوتوغرافي ' + queryBase)}`;
+  container.innerHTML = '';
+
+  if (isAbroad) {
+    // Consular alert box for citizens abroad
+    const infoBox = document.createElement('div');
+    infoBox.className = 'consulate-info-box';
+    infoBox.innerHTML = `
+      <span style="font-size: 1.2rem;">🇹🇳</span>
+      <div>${t('consulateInfo')}</div>
+    `;
+    container.appendChild(infoBox);
   }
 
-  const pBtn = document.getElementById('res-map-link-police');
-  const mBtn = document.getElementById('res-map-link-municipality');
-  const rBtn = document.getElementById('res-map-link-recette');
-  const phBtn = document.getElementById('res-map-link-photo');
+  if (depts.length === 0) {
+    const fallbackQuery = `مركز شرطة أو حرس وطني ${AppState.delegation} ${gov.ar} تونس`;
+    container.innerHTML += `
+      <div class="admin-place-item">
+        <div class="place-item-top">
+          <div class="place-icon-box icon-police">👮</div>
+          <div class="place-info">
+            <h4>${t('nearestPoliceTitle')}</h4>
+            <p>${AppState.delegation} - ${gov[AppState.lang] || gov.ar}</p>
+          </div>
+        </div>
+        <div class="dept-action-btns">
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fallbackQuery)}" target="_blank" rel="noopener" class="place-nav-btn">
+            <span>🗺️</span> <span>${t('openGoogleMapsNav')}</span>
+          </a>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
-  if (pBtn) pBtn.href = policeUrl;
-  if (mBtn) mBtn.href = muniUrl;
-  if (rBtn) rBtn.href = recetteUrl;
-  if (phBtn) phBtn.href = photoUrl;
+  depts.forEach(d => {
+    const item = document.createElement('div');
+    item.className = 'admin-place-item';
+
+    let iconClass = 'icon-police';
+    let iconEmoji = '👮';
+    let typeName = t('nearestPoliceTitle');
+    let typeDesc = t('nearestPoliceDesc');
+
+    if (d.type === 'municipality') {
+      iconClass = 'icon-muni';
+      iconEmoji = '🏛️';
+      typeName = t('nearestMunicipalityTitle');
+      typeDesc = t('nearestMunicipalityDesc');
+    } else if (d.type === 'recette') {
+      iconClass = 'icon-recette';
+      iconEmoji = '🏦';
+      typeName = t('nearestRecetteTitle');
+      typeDesc = t('nearestRecetteDesc');
+    } else if (d.type === 'consulate') {
+      iconClass = 'icon-police';
+      iconEmoji = '🇹🇳';
+      typeName = t('consulateBadge');
+      typeDesc = d.country ? `البعثة الدبلوماسية والقنصلية (${d.country})` : t('sourceConsulate');
+    }
+
+    const officeName = (d.name && d.name[AppState.lang]) ? d.name[AppState.lang] : (d.name ? d.name.ar : typeName);
+    const officeAddress = (d.address && d.address[AppState.lang]) ? d.address[AppState.lang] : (d.address ? d.address.ar : '');
+    const officeHours = (d.hours && d.hours[AppState.lang]) ? d.hours[AppState.lang] : (d.hours ? d.hours.ar : '');
+
+    // Format real calculated distance badge
+    let distBadge = '';
+    if (d.distanceKm !== null && d.distanceKm !== undefined) {
+      if (d.distanceKm < 1) {
+        distBadge = `<span class="dept-dist-tag">📍 ${t('distanceM', { dist: Math.round(d.distanceKm * 1000) })}</span>`;
+      } else {
+        distBadge = `<span class="dept-dist-tag">📍 ${t('distanceKm', { dist: d.distanceKm.toFixed(1) })}</span>`;
+      }
+    }
+
+    // Exact Google Maps navigation URL
+    const googleNavUrl = userLat && userLng
+      ? `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${d.lat},${d.lng}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
+
+    item.innerHTML = `
+      <div class="place-item-top">
+        <div class="place-icon-box ${iconClass}">${iconEmoji}</div>
+        <div class="place-info">
+          <div class="dept-header-title">
+            <h4>${officeName}</h4>
+            <span class="verified-office-badge">✓ ${t('verifiedBadge')}</span>
+            ${distBadge}
+          </div>
+          <p>${typeDesc}</p>
+          <div class="dept-meta-details">
+            ${officeAddress ? `<div class="dept-meta-row"><span>📍</span> <span>${officeAddress}</span></div>` : ''}
+            ${officeHours ? `<div class="dept-meta-row"><span>🕒</span> <span>${t('officialHours')} ${officeHours}</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="dept-action-btns">
+        ${d.phone ? `<a href="tel:${d.phone.replace(/\s+/g, '')}" class="dept-btn-call" title="${d.phone}"><span>📞</span> <span>${d.phone}</span></a>` : ''}
+        <button type="button" class="dept-btn-focus" onclick="focusDepartmentOnMap(${d.lat}, ${d.lng}, 16, '${officeName.replace(/'/g, "\\'")}')">
+          <span>📍</span> <span>${t('centerOnMap')}</span>
+        </button>
+        <a href="${googleNavUrl}" target="_blank" rel="noopener" class="place-nav-btn">
+          <span>🚀</span> <span>${t('openGoogleMapsNav')}</span>
+        </a>
+      </div>
+    `;
+
+    container.appendChild(item);
+  });
+
+  // Photo studio card (if inside Tunisia)
+  if (!isAbroad) {
+    const locName = `${AppState.delegation} ${gov.ar} تونس`;
+    const photoUrl = userLat && userLng
+      ? `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent('استوديو تصوير فوتوغرافي ' + locName)}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('استوديو تصوير فوتوغرافي ' + locName)}`;
+
+    const photoItem = document.createElement('div');
+    photoItem.className = 'admin-place-item';
+    photoItem.innerHTML = `
+      <div class="place-item-top">
+        <div class="place-icon-box icon-photo">📸</div>
+        <div class="place-info">
+          <div class="dept-header-title">
+            <h4>${t('nearestPhotoTitle')}</h4>
+          </div>
+          <p>${t('nearestPhotoDesc')} - ${AppState.delegation}</p>
+        </div>
+      </div>
+      <div class="dept-action-btns">
+        <a href="${photoUrl}" target="_blank" rel="noopener" class="place-nav-btn">
+          <span>🚀</span> <span>${t('openGoogleMapsNav')}</span>
+        </a>
+      </div>
+    `;
+    container.appendChild(photoItem);
+  }
 }
 
-// Leaflet Interactive Map
+// Leaflet Interactive Map: Verified Real Pins
 function initOrUpdateMap() {
   const mapDiv = document.getElementById('map-container');
   if (!mapDiv || typeof L === 'undefined') return;
 
   const gov = SICAD_DATA.governorates.find(g => g.id === AppState.governorateId) || SICAD_DATA.governorates[0];
-  let centerLat = AppState.userCoords ? AppState.userCoords.lat : (gov.lat || 36.8065);
-  let centerLng = AppState.userCoords ? AppState.userCoords.lng : (gov.lng || 10.1815);
+  const userLat = AppState.userCoords ? AppState.userCoords.lat : null;
+  const userLng = AppState.userCoords ? AppState.userCoords.lng : null;
+
+  const depts = (typeof getVerifiedDepartments === 'function')
+    ? getVerifiedDepartments(AppState.governorateId, AppState.delegation, userLat, userLng)
+    : [];
+
+  let centerLat = userLat || (depts[0] ? depts[0].lat : (gov.lat || 36.8065));
+  let centerLng = userLng || (depts[0] ? depts[0].lng : (gov.lng || 10.1815));
 
   if (!mapInstance) {
     mapInstance = L.map('map-container', {
@@ -1159,7 +1291,7 @@ function initOrUpdateMap() {
     
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '© OpenStreetMap'
+      attribution: '© OpenStreetMap • SICAD Tunisia'
     }).addTo(mapInstance);
 
     mapMarkersGroup = L.featureGroup().addTo(mapInstance);
@@ -1169,92 +1301,94 @@ function initOrUpdateMap() {
     if (mapMarkersGroup) mapMarkersGroup.clearLayers();
   }
 
-  // Add User Marker if GPS
-  if (AppState.userCoords) {
+  mapMarkerInstances = {};
+
+  // Add User GPS Marker if available
+  if (AppState.userCoords && AppState.userCoords.lat) {
     const userIcon = L.divIcon({
       className: 'custom-map-pin pin-user',
-      html: '<div class="pin-inner user-pulse">📍 موقعك</div>',
+      html: `<div class="pin-inner user-pulse">📍 ${AppState.lang === 'ar' ? 'موقعك' : 'Vous'}</div>`,
       iconSize: [60, 30],
       iconAnchor: [30, 30]
     });
-    L.marker([centerLat, centerLng], { icon: userIcon })
-      .bindPopup(`<strong>موقعك الحالي</strong><br>دائرة: ${AppState.delegation}`)
+    L.marker([AppState.userCoords.lat, AppState.userCoords.lng], { icon: userIcon })
+      .bindPopup(`<strong>📍 ${AppState.lang === 'ar' ? 'موقعك الحالي' : 'Votre position'}</strong><br>${AppState.delegation} (${gov[AppState.lang] || gov.ar})`)
       .addTo(mapMarkersGroup);
   }
 
-  // Create markers for local administrations
-  const locName = `${AppState.delegation} - ${gov[AppState.lang] || gov.ar}`;
-
-  const places = [
-    {
-      title: t('nearestPoliceTitle'),
-      desc: "مركز شرطة أو حرس وطني",
-      iconEmoji: "👮",
-      colorClass: "pin-police",
-      latOffset: 0.003,
-      lngOffset: 0.002,
-      query: `مركز شرطة ${locName}`
-    },
-    {
-      title: t('nearestMunicipalityTitle'),
-      desc: "بلدية / دائرة بلدية (الحالة المدنية)",
-      iconEmoji: "🏛️",
-      colorClass: "pin-muni",
-      latOffset: -0.003,
-      lngOffset: -0.0025,
-      query: `بلدية ${locName}`
-    },
-    {
-      title: t('nearestRecetteTitle'),
-      desc: "القباضة المالية (وصول الخلاص والتمبر)",
-      iconEmoji: "🏦",
-      colorClass: "pin-recette",
-      latOffset: 0.002,
-      lngOffset: -0.004,
-      query: `قباضة مالية ${locName}`
-    },
-    {
-      title: t('nearestPhotoTitle'),
-      desc: "استوديو تصوير شمسية للمستندات",
-      iconEmoji: "📸",
-      colorClass: "pin-photo",
-      latOffset: -0.002,
-      lngOffset: 0.0035,
-      query: `استوديو تصوير ${locName}`
+  // Add Verified Department Markers with Real Coordinates
+  depts.forEach((d) => {
+    let pinClass = 'pin-police';
+    let iconEmoji = '👮';
+    if (d.type === 'municipality') {
+      pinClass = 'pin-muni';
+      iconEmoji = '🏛️';
+    } else if (d.type === 'recette') {
+      pinClass = 'pin-recette';
+      iconEmoji = '🏦';
+    } else if (d.type === 'consulate') {
+      pinClass = 'pin-consulate';
+      iconEmoji = '🇹🇳';
     }
-  ];
-
-  places.forEach(p => {
-    const pLat = centerLat + p.latOffset;
-    const pLng = centerLng + p.lngOffset;
 
     const customIcon = L.divIcon({
-      className: `custom-map-pin ${p.colorClass}`,
-      html: `<div class="pin-inner">${p.iconEmoji}</div>`,
+      className: `custom-map-pin ${pinClass}`,
+      html: `<div class="pin-inner">${iconEmoji}</div>`,
       iconSize: [36, 36],
       iconAnchor: [18, 36]
     });
 
-    const googleNavUrl = `https://www.google.com/maps/dir/?api=1&destination=${pLat},${pLng}`;
+    const officeName = (d.name && d.name[AppState.lang]) ? d.name[AppState.lang] : (d.name ? d.name.ar : '');
+    const officeAddress = (d.address && d.address[AppState.lang]) ? d.address[AppState.lang] : (d.address ? d.address.ar : '');
+    const googleNavUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
+
+    let distHtml = '';
+    if (d.distanceKm !== null && d.distanceKm !== undefined) {
+      distHtml = `<div style="font-size: 11px; color: #2563eb; font-weight: 700; margin-bottom: 4px;">📍 ${d.distanceKm < 1 ? Math.round(d.distanceKm * 1000) + ' م' : d.distanceKm.toFixed(1) + ' كم'}</div>`;
+    }
 
     const popupHtml = `
       <div class="map-popup-box">
-        <h4>${p.title}</h4>
-        <p>${p.desc} - ${locName}</p>
+        <span class="verified-office-badge" style="margin-bottom: 4px; display: inline-block;">✓ ${t('verifiedBadge')}</span>
+        <h4>${officeName}</h4>
+        ${officeAddress ? `<p>📍 ${officeAddress}</p>` : ''}
+        ${d.phone ? `<p>📞 <a href="tel:${d.phone.replace(/\s+/g, '')}">${d.phone}</a></p>` : ''}
+        ${distHtml}
         <a href="${googleNavUrl}" target="_blank" rel="noopener" class="popup-nav-btn">
-          🚀 فتح مسار الطريق (Navigation GPS)
+          🚀 ${t('openGoogleMapsNav')}
         </a>
       </div>
     `;
 
-    L.marker([pLat, pLng], { icon: customIcon })
+    const marker = L.marker([d.lat, d.lng], { icon: customIcon })
       .bindPopup(popupHtml)
       .addTo(mapMarkersGroup);
+
+    const markerKey = `${d.lat.toFixed(4)}_${d.lng.toFixed(4)}`;
+    mapMarkerInstances[markerKey] = marker;
   });
 
-  if (mapMarkersGroup.getLayers().length > 0) {
-    mapInstance.fitBounds(mapMarkersGroup.getBounds().pad(0.2));
+  if (mapMarkersGroup && mapMarkersGroup.getLayers().length > 0) {
+    mapInstance.fitBounds(mapMarkersGroup.getBounds().pad(0.18));
   }
+}
+
+// Interactive Map Focus Helper
+function focusDepartmentOnMap(lat, lng, zoom = 16, title = '') {
+  if (!mapInstance) return;
+  
+  const mapElement = document.getElementById('map-container');
+  if (mapElement) {
+    mapElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  setTimeout(() => {
+    mapInstance.setView([lat, lng], zoom, { animate: true });
+    const markerKey = `${lat.toFixed(4)}_${lng.toFixed(4)}`;
+    if (mapMarkerInstances[markerKey]) {
+      mapMarkerInstances[markerKey].openPopup();
+    }
+  }, 350);
 }
 
 // Sharing & Export Helpers
