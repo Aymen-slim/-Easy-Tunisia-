@@ -118,6 +118,19 @@ function goToScreen(screenId) {
     target.classList.add('active-screen');
   }
 
+  // Update bottom navigation dock buttons
+  document.querySelectorAll('.dock-nav-btn').forEach(btn => btn.classList.remove('active'));
+  if (screenId === 'screen-choice') {
+    const b = document.getElementById('dock-btn-choice');
+    if (b) b.classList.add('active');
+  } else if (screenId === 'screen-results') {
+    const b = document.getElementById('dock-btn-results');
+    if (b) b.classList.add('active');
+  } else {
+    const b = document.getElementById(AppState.selectedDoc === 'passport' ? 'dock-btn-passport' : 'dock-btn-cin');
+    if (b) b.classList.add('active');
+  }
+
   // Header reset button visibility
   const resetBtn = document.getElementById('header-reset-btn');
   if (resetBtn) {

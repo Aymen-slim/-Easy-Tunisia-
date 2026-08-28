@@ -1885,7 +1885,7 @@ button {
 /* Toast Alert */
 .app-toast {
   position: fixed;
-  bottom: 24px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
   background: #0f172a;
@@ -1904,4 +1904,102 @@ button {
 .app-toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+}
+
+/* ==========================================================================
+   MOBILE-FIRST BOTTOM NAVIGATION DOCK & PHONE PERFORMANCE OPTIMIZATIONS
+   ========================================================================== */
+.mobile-bottom-dock {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  background: var(--bg-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0));
+  justify-content: space-around;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-dock {
+    display: none;
+  }
+}
+
+.dock-nav-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 60px;
+  touch-action: manipulation;
+}
+
+.dock-nav-btn:active {
+  transform: scale(0.92);
+}
+
+.dock-icon {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.dock-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dock-nav-btn.active {
+  color: var(--primary-red);
+}
+
+.dock-nav-btn.active .dock-icon {
+  transform: translateY(-2px) scale(1.15);
+}
+
+/* Prevent mobile content cutoff due to fixed dock */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(75px + env(safe-area-inset-bottom, 12px));
+  }
+  
+  .main-wrapper {
+    padding-bottom: 20px;
+  }
+
+  /* Prevent iOS automatic input zoom (requires 16px font-size) */
+  input[type="text"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Smooth momentum touch scrolling */
+  .city-search-dropdown,
+  .docs-checklist,
+  .admin-places-list {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Leaflet touch usability on phone */
+  .leaflet-container {
+    touch-action: pan-x pan-y;
+  }
 }

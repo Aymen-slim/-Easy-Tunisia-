@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Easy Tunisia | دليل بطاقة التعريف الوطنية وجواز السفر التونسي</title>
   <meta name="description" content="Easy Tunisia - دليل إرشادي تفاعلي ذكي ومستقل للمواطن التونسي لاستخراج وتجديد بطاقة التعريف الوطنية وجواز السفر وفق بيانات سيكاد الرسمية.">
   <meta name="theme-color" content="#E70013">
@@ -678,6 +678,26 @@
       </div>
     </div>
   </footer>
+
+  <!-- Floating Bottom Navigation Dock for Mobile Phones -->
+  <nav class="mobile-bottom-dock" aria-label="شريط التنقل السريع للهاتف">
+    <button type="button" class="dock-nav-btn active" id="dock-btn-choice" onclick="goToScreen('screen-choice')">
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label" data-i18n="dockHome">الرئيسية</span>
+    </button>
+    <button type="button" class="dock-nav-btn" id="dock-btn-passport" onclick="selectDocument('passport')">
+      <span class="dock-icon">📕</span>
+      <span class="dock-label" data-i18n="dockPassport">الجواز 📕</span>
+    </button>
+    <button type="button" class="dock-nav-btn" id="dock-btn-cin" onclick="selectDocument('cin')">
+      <span class="dock-icon">🪪</span>
+      <span class="dock-label" data-i18n="dockCin">التعريف 🪪</span>
+    </button>
+    <button type="button" class="dock-nav-btn" id="dock-btn-results" onclick="proceedToResults()">
+      <span class="dock-icon">🗺️</span>
+      <span class="dock-label" data-i18n="dockResults">الوثائق والخريطة 🗺️</span>
+    </button>
+  </nav>
 
   <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

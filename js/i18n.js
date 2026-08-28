@@ -142,6 +142,12 @@ const TRANSLATIONS = {
     progressTitle: "جاهزية الملف:",
     completedDocs: "تم تجهيز {count} من {total} وثائق",
     
+    // Bottom Dock Navigation
+    dockHome: "الرئيسية",
+    dockPassport: "الجواز 📕",
+    dockCin: "التعريف 🪪",
+    dockResults: "الوثائق والخريطة 🗺️",
+    
     // Source Attribution
     sicadSource: "المصدر الرسمي للمعلومات: بوابة الخدمات الإدارية التونسية (سيكاد - SICAD)",
     cinSourceLinkText: "رابط بطاقة التعريف (سيكاد D1309)",
@@ -291,6 +297,12 @@ const TRANSLATIONS = {
     progressTitle: "Progression du dossier :",
     completedDocs: "{count} sur {total} documents prêts",
     
+    // Bottom Dock Navigation
+    dockHome: "Accueil",
+    dockPassport: "Passeport 📕",
+    dockCin: "CIN 🪪",
+    dockResults: "Docs & Carte 🗺️",
+    
     // Source Attribution
     sicadSource: "Source Officielle : Portail des services administratifs (SICAD Tunisie)",
     cinSourceLinkText: "Fiche SICAD CIN (D1309)",
@@ -439,6 +451,12 @@ const TRANSLATIONS = {
     // Progress
     progressTitle: "File Readiness:",
     completedDocs: "{count} of {total} documents ready",
+    
+    // Bottom Dock Navigation
+    dockHome: "Home",
+    dockPassport: "Passport 📕",
+    dockCin: "ID Card 🪪",
+    dockResults: "Docs & Map 🗺️",
     
     // Source Attribution
     sicadSource: "Official Source: Tunisian Administrative Services Portal (SICAD)",
